@@ -18,6 +18,28 @@ interface Props {
 
 const { bodyClass, ...seo } = Astro.props;
 const site = await getSite();
+
+/**
+ * Tailwind emits its palette inside `@layer theme`, so this unlayered `:root`
+ * block always wins regardless of source order. That lets the CMS restyle the
+ * whole site without touching CSS. Values are hex-validated by the schema, so
+ * nothing here can escape the style block.
+ */
+const palette: Record<string, string> = {
+  '--color-forest': site.theme.forest,
+  '--color-forest-soft': site.theme.forestSoft,
+  '--color-olive': site.theme.olive,
+  '--color-cream': site.theme.cream,
+  '--color-sand': site.theme.sand,
+  '--color-clay': site.theme.clay,
+  '--color-clay-dark': site.theme.clayDark,
+  '--color-ink': site.theme.ink,
+  '--color-muted': site.theme.muted,
+};
+
+const paletteStyle = `<style>:root{${Object.entries(palette)
+  .map(([name, value]) => `${name}:${value}`)
+  .join(';')}}</style>`;
 ---
 
 <!doctype html>
@@ -31,6 +53,7 @@ const site = await getSite();
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title={`${site.siteName} - Blog`} href="/rss.xml" />
     <Seo {...seo} />
+    <Fragment set:html={paletteStyle} />
     <slot name="head" />
   </head>
   <body class={bodyClass}>

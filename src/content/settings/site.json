@@ -85,5 +85,16 @@
       "label": "Contact",
       "href": "/contact"
     }
-  ]
+  ],
+  "theme": {
+    "forest": "#0b322b",
+    "forestSoft": "#14453c",
+    "olive": "#27331b",
+    "cream": "#e9e6df",
+    "sand": "#f5f3ee",
+    "clay": "#be6d54",
+    "clayDark": "#a45940",
+    "ink": "#1c1c1a",
+    "muted": "#5f6360"
+  }
 }

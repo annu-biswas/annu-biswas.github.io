@@ -8,6 +8,27 @@ import { glob } from 'astro/loaders';
  */
 const imagePath = z.string();
 
+/**
+ * Strict hex so a CMS value can never break out of the <style> block that
+ * applies it. A malformed colour fails the build instead of shipping.
+ */
+const hexColor = z
+  .string()
+  .regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, 'Use a hex colour such as #0b322b');
+
+/** Matches the tokens declared in src/styles/global.css. */
+const DEFAULT_THEME = {
+  forest: '#0b322b',
+  forestSoft: '#14453c',
+  olive: '#27331b',
+  cream: '#e9e6df',
+  sand: '#f5f3ee',
+  clay: '#be6d54',
+  clayDark: '#a45940',
+  ink: '#1c1c1a',
+  muted: '#5f6360',
+} as const;
+
 const link = z.object({
   label: z.string(),
   href: z.string(),
@@ -47,7 +68,21 @@ const siteSettings = defineCollection({
     logoText: z.string(),
     logoImage: imagePath.optional(),
     favicon: imagePath,
-    themeColor: z.string(),
+    themeColor: hexColor,
+    /** Overrides the Tailwind palette at runtime. See BaseLayout. */
+    theme: z
+      .object({
+        forest: hexColor.default(DEFAULT_THEME.forest),
+        forestSoft: hexColor.default(DEFAULT_THEME.forestSoft),
+        olive: hexColor.default(DEFAULT_THEME.olive),
+        cream: hexColor.default(DEFAULT_THEME.cream),
+        sand: hexColor.default(DEFAULT_THEME.sand),
+        clay: hexColor.default(DEFAULT_THEME.clay),
+        clayDark: hexColor.default(DEFAULT_THEME.clayDark),
+        ink: hexColor.default(DEFAULT_THEME.ink),
+        muted: hexColor.default(DEFAULT_THEME.muted),
+      })
+      .default(DEFAULT_THEME),
     email: z.string().optional(),
     phone: z.string().optional(),
     address: z.string().optional(),

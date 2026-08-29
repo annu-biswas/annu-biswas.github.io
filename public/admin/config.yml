@@ -10,8 +10,8 @@ backend:
   name: github
   repo: annu-biswas/annu-biswas.github.io
   branch: main
-  base_url: https://decap-oauth.example.workers.dev
-  auth_endpoint: auth
+  base_url: https://decap-oauth-bishal.vercel.app
+  auth_endpoint: api/auth
 
 local_backend: true
 
@@ -53,9 +53,67 @@ collections:
             hint: Optional. Replaces the logo text in the header.
           - { name: favicon, label: Favicon, widget: file }
           - name: themeColor
-            label: Browser theme colour
-            widget: string
-            hint: A hex colour such as #0b322b.
+            label: Browser tab colour
+            widget: color
+            allow_input: true
+            hint: Tints the browser UI on mobile. Usually the same as Primary dark.
+          - name: theme
+            label: Site colours
+            widget: object
+            collapsed: true
+            summary: Palette
+            fields:
+              - name: forest
+                label: Primary dark
+                widget: color
+                allow_input: true
+                default: "#0b322b"
+                hint: Hero band, footer, page headers.
+              - name: forestSoft
+                label: Primary dark (soft)
+                widget: color
+                allow_input: true
+                default: "#14453c"
+                hint: Placeholder behind video thumbnails.
+              - name: olive
+                label: Secondary dark
+                widget: color
+                allow_input: true
+                default: "#27331b"
+                hint: The alternating band on Home and Events.
+              - name: cream
+                label: Page background
+                widget: color
+                allow_input: true
+                default: "#e9e6df"
+              - name: sand
+                label: Card background
+                widget: color
+                allow_input: true
+                default: "#f5f3ee"
+                hint: Also the text colour on dark bands.
+              - name: clay
+                label: Accent
+                widget: color
+                allow_input: true
+                default: "#be6d54"
+                hint: Headings, buttons, links.
+              - name: clayDark
+                label: Accent (hover)
+                widget: color
+                allow_input: true
+                default: "#a45940"
+              - name: ink
+                label: Body text
+                widget: color
+                allow_input: true
+                default: "#1c1c1a"
+              - name: muted
+                label: Secondary text
+                widget: color
+                allow_input: true
+                default: "#5f6360"
+                hint: Dates, captions, labels.
           - { name: email, label: Email, widget: string, required: false }
           - { name: phone, label: Phone, widget: string, required: false }
           - { name: address, label: Address, widget: string, required: false }

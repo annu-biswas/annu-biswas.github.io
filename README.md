@@ -4,6 +4,7 @@ An Astro Site for Professor Portfolio. Compatible with GitHub Pages and edited t
 
 - **Live site:** https://your-github.github.io
 - **Content manager:** https://your-github.github.io/admin/index.html
+- **Handover / setup:** [STEPS.md](STEPS.md)
 - **Stack:** Astro 7 · Tailwind CSS 4 · Astro Content Collections · astro-seo · @astrojs/sitemap · DecapCMS
 
 ---
@@ -132,13 +133,24 @@ One thing to know: post slugs and page numbers share the `/blog/*` namespace, so
 
 Extracted from the reference site and defined in `src/styles/global.css` as Tailwind theme variables.
 
-| Token | Value | Used for |
-| --- | --- | --- |
-| `forest` | `#0b322b` | Primary dark band, footer |
-| `olive` | `#27331b` | Alternate dark band (media) |
-| `cream` | `#e9e6df` | Page background |
-| `sand` | `#f5f3ee` | Cards, light text on dark |
-| `clay` | `#be6d54` | Headings, accents, buttons |
+| Token | CMS label | Default | Used for |
+| --- | --- | --- | --- |
+| `forest` | Primary dark | `#0b322b` | Hero band, footer, page headers |
+| `forest-soft` | Primary dark (soft) | `#14453c` | Video thumbnail placeholder |
+| `olive` | Secondary dark | `#27331b` | Alternating band on Home and Events |
+| `cream` | Page background | `#e9e6df` | Page background |
+| `sand` | Card background | `#f5f3ee` | Cards, and text on dark bands |
+| `clay` | Accent | `#be6d54` | Headings, buttons, links |
+| `clay-dark` | Accent (hover) | `#a45940` | Button and link hover |
+| `ink` | Body text | `#1c1c1a` | Body copy |
+| `muted` | Secondary text | `#5f6360` | Dates, captions, labels |
+
+**All nine are editable in the CMS** under *Site Settings → General → Site
+colours*. Tailwind emits its palette inside `@layer theme`, so the unlayered
+`:root` block that `BaseLayout.astro` writes into `<head>` always wins — one
+saved colour restyles every page, including hand-written CSS such as the hero
+gradient. Values are hex-validated by the schema, so a malformed colour fails
+the build rather than breaking the page.
 
 Headings use Georgia/Palatino serif, body copy Helvetica Neue/Arial - matching the reference. The display scale is fluid via `clamp()`, topping out at the reference's desktop sizes (75px / 57px / 32px).
 
@@ -152,13 +164,34 @@ One-time setup: in the repository, **Settings → Pages → Build and deployment
 
 ### DecapCMS authentication in production
 
-GitHub Pages is a static host and cannot run the OAuth handshake DecapCMS needs, so the GitHub backend requires a small external broker.
+GitHub Pages is a static host and cannot exchange an OAuth `code` for a token, so
+Decap's GitHub backend needs a small external broker. This site points at an
+existing one:
 
-1. Register a GitHub OAuth app (**Settings → Developer settings → OAuth Apps**). Set the callback URL to your broker's `/callback` endpoint.
-2. Deploy an OAuth broker - a Cloudflare Worker or Netlify site running one of the community `decap-cms-github-oauth-provider` implementations - with the app's client ID and secret as environment variables.
-3. Put the broker's origin into `base_url` in `public/admin/config.yml` (currently a placeholder: `https://decap-oauth.example.workers.dev`).
+```yaml
+base_url: https://decap-oauth-bishal.vercel.app
+auth_endpoint: api/auth
+```
 
-Until that is done, the CMS works locally via `npm run cms` and commits are made by hand.
+The broker source lives in the `decap-oauth` project. One deployment serves any
+number of sites — the GitHub OAuth App's callback URL points at the *broker*, not
+at any individual site, so adding a site is one environment variable.
+
+To authorise this site, add its origin to the broker's `ALLOWED_ORIGINS` (comma
+separated, **scheme included**) and redeploy on Vercel so the new value is picked
+up:
+
+```
+https://bishal-biswas.github.io,https://annu-biswas.github.io
+```
+
+Whoever logs into the CMS must have write access to
+`annu-biswas/annu-biswas.github.io`. The GitHub account that owns the OAuth App
+does not grant repository access — the token is issued for the user who
+authorises, with their permissions.
+
+Until the origin is added, the CMS works locally via `npm run cms` and commits are
+made by hand.
 
 ---
 
