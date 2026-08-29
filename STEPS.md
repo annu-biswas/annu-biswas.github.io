@@ -29,7 +29,7 @@ only about handing it over.
 | --- | --- |
 | Real photographs | Placeholders are Lorem Picsum. **Not licensed for commercial resale.** Every image must be replaced before launch. |
 | Real copy | Biography, publications, books and events are invented sample content. |
-| A working contact form | The form is deliberately non-functional. See step 9. |
+| A working contact form | The form is deliberately non-functional. See step 10. |
 | Legal page content | Privacy / Terms / Accessibility are reasonable drafts, not legal advice. Have them reviewed. |
 | A real CV | `public/files/cv.pdf` is an empty placeholder. |
 | Domain name | Optional. GitHub Pages gives a free `*.github.io` address. |
@@ -39,18 +39,80 @@ repos), and a Vercel hobby project for CMS login are all free at this scale.
 
 ---
 
-## 1. Seller: before handover
+## 1. Seller: cutting a release
+
+**Release assets on a private repository are not publicly downloadable.** Fetching
+one requires a token with access to that repo, so a GitHub Release cannot itself
+be the delivery channel for buyers. Releases here are for *versioning*; delivery
+happens through your store.
+
+### Repository layout
+
+Keep two repositories:
+
+| Repo | Contents | Visibility |
+| --- | --- | --- |
+| **Product master** | Neutral template — placeholder content, no client names | Private |
+| **Client site** | A specific client's live site, forked from a release | Public (needed for free Pages) |
+
+Packaging runs against the *product master*. `npm run package` refuses to build
+if it finds client-specific values in the files a buyer configures, so a client
+site cannot be shipped as the product by accident.
+
+### Cutting a version
+
+```bash
+npm version 1.1.0 --no-git-tag-version   # bump package.json
+git commit -am "Release 1.1.0"
+git tag v1.1.0
+git push origin main --tags
+```
+
+The tag triggers `.github/workflows/release.yml`, which type-checks, builds, runs
+the overflow test, packages the ZIP, and attaches it to a GitHub Release.
+
+To build the ZIP locally instead:
+
+```bash
+npm run package
+```
+
+Output lands in `dist-zip/`. The ZIP is produced by `git archive`, so it contains
+exactly the committed files — never `node_modules`, `dist`, `.astro`, `.env`, or
+anything untracked. Files marked `export-ignore` in `.gitattributes` (the release
+workflow, the packaging script) are left out too.
+
+The script refuses to run if the working tree is dirty, because uncommitted work
+would be silently missing from the ZIP.
+
+### Delivering to the buyer
+
+1. Download the ZIP from the GitHub Release (or `dist-zip/` locally)
+2. Upload it as the product file on **Gumroad** or **LemonSqueezy**
+3. The store handles payment, delivery, receipts and — on LemonSqueezy — licence
+   keys and update notifications
+
+Your repository stays private. Buyers never touch GitHub to receive the product.
+
+### Shipping an update
+
+Cut a new tag, download the new ZIP, replace the product file in the store.
+Gumroad and LemonSqueezy both notify previous buyers of a new version.
+
+---
+
+## 2. Seller: before handover
 
 - [ ] `git init` and commit — the project is not yet a repository
 - [ ] Push to a private GitHub repo you own (the "master copy")
 - [ ] Run `npm run verify` — must be green (0 type errors, all overflow checks pass)
-- [ ] Decide the OAuth arrangement (step 6) and tell the buyer which applies
+- [ ] Decide the OAuth arrangement (step 7) and tell the buyer which applies
 - [ ] Agree in writing what happens if the buyer needs changes later, and for
       how long you will answer questions
 
 ---
 
-## 2. Buyer: get the code
+## 3. Buyer: get the code
 
 ```bash
 git clone <seller-repo-url> my-site
@@ -67,7 +129,7 @@ Requires **Node 22 or newer** (`node -v`). This is what CI uses.
 
 ---
 
-## 3. Buyer: create the GitHub repository
+## 4. Buyer: create the GitHub repository
 
 **The repository name decides the site URL, and this is the single easiest thing
 to get wrong.**
@@ -91,7 +153,7 @@ git branch -M main
 
 ---
 
-## 4. Buyer: rebrand the six hardcoded lines
+## 5. Buyer: rebrand the six hardcoded lines
 
 Everything else is CMS-editable. These are not, because the build needs them
 before the CMS exists.
@@ -120,14 +182,14 @@ logo_url: https://<username>.github.io/favicon.svg
 Then confirm nothing was missed:
 
 ```bash
-grep -rn "annu-biswas" astro.config.mjs public/robots.txt public/admin/config.yml
+grep -rn "your-username\|your-oauth-broker" astro.config.mjs public/robots.txt public/admin/config.yml README.md
 ```
 
-That should print nothing.
+That should print nothing. Any hit is a placeholder you still need to replace.
 
 ---
 
-## 5. Buyer: first deploy
+## 6. Buyer: first deploy
 
 ```bash
 git add -A
@@ -147,7 +209,7 @@ overflow test, then publishes. Green tick means the site is live.
 
 ---
 
-## 6. CMS login (OAuth)
+## 7. CMS login (OAuth)
 
 GitHub Pages cannot exchange an OAuth code for a token, so Decap needs a small
 external broker. **Pick one of these two.**
@@ -212,7 +274,7 @@ issued for the person who authorises, with their permissions.
 
 ---
 
-## 7. Buyer: replace the placeholder content
+## 8. Buyer: replace the placeholder content
 
 Log in at `https://<username>.github.io/admin/`. Each save commits to the repo
 and triggers a rebuild; the live site updates in a minute or two.
@@ -235,7 +297,7 @@ To edit locally instead, run `npm run cms` in a second terminal alongside
 
 ---
 
-## 8. Buyer: optional custom domain
+## 9. Buyer: optional custom domain
 
 1. Add a file named `CNAME` in `public/` containing just the domain, e.g.
    `annubiswas.com`
@@ -249,7 +311,7 @@ To edit locally instead, run `npm run cms` in a second terminal alongside
 
 ---
 
-## 9. Buyer: make the contact form work
+## 10. Buyer: make the contact form work
 
 The form currently renders, validates visually, and shows a notice on submit —
 it does **not** send anything. This is intentional and documented.
@@ -266,7 +328,7 @@ is required.
 
 ---
 
-## 10. Verifying a change
+## 11. Verifying a change
 
 ```bash
 npm run verify
@@ -299,8 +361,8 @@ If the buyer just wants the sequence:
 
 1. Clone the repo, `npm install`
 2. Create a **public** repo named `<username>.github.io`
-3. Change the six hardcoded lines (step 4)
+3. Change the six hardcoded lines (step 5)
 4. Push, then set **Settings → Pages → Source: GitHub Actions**
-5. Set up OAuth (step 6) — either their own broker, or send the seller the live
+5. Set up OAuth (step 7) — either their own broker, or send the seller the live
    URL to allowlist
 6. Log into `/admin/` and replace all placeholder content and images

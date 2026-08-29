@@ -1,0 +1,14 @@
+# Files that belong to development but not in the product ZIP.
+# `git archive` honours export-ignore, so `npm run package` excludes them.
+.gitattributes      export-ignore
+.github/workflows/release.yml export-ignore
+scripts/package.mjs export-ignore
+.vscode/            export-ignore
+
+# Keep line endings sane for buyers on Windows.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pdf binary

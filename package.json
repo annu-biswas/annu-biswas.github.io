@@ -1,5 +1,5 @@
 {
-  "name": "annu-biswas-portfolio",
+  "name": "professor-portfolio",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -10,7 +10,8 @@
     "check": "astro check",
     "cms": "npx decap-server",
     "check:overflow": "node scripts/check-overflow.mjs",
-    "verify": "astro check && astro build && npm run check:overflow"
+    "verify": "astro check && astro build && npm run check:overflow",
+    "package": "node scripts/package.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

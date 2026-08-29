@@ -1,0 +1,60 @@
+name: Package release
+
+# Builds the product ZIP and attaches it to a GitHub Release.
+#
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# NOTE: on a PRIVATE repository, release assets are NOT publicly downloadable —
+# fetching one needs a token with access to this repo. This workflow exists to
+# produce a versioned, reproducible artifact. Delivery to buyers happens through
+# your store (Gumroad / LemonSqueezy), which you upload the ZIP to.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & attach ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Never ship a version that does not build and pass its own checks.
+      - name: Verify
+        run: npm run verify
+
+      - name: Build ZIP
+        id: zip
+        run: |
+          npm run package
+          FILE=$(ls dist-zip/*.zip | head -1)
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+          echo "Built $FILE"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" "${{ steps.zip.outputs.file }}" \
+            --title "${{ github.ref_name }}" \
+            --generate-notes
+
+      # Keeps the artifact for 90 days even if the release is later deleted.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: product-zip
+          path: dist-zip/*.zip

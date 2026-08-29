@@ -37,6 +37,7 @@ npm run cms
 | `npm run cms` | Local DecapCMS backend proxy |
 | `npm run check:overflow` | Fails if any page scrolls horizontally (serves `dist/` itself) |
 | `npm run verify` | Type check, build, then run the overflow check end to end |
+| `npm run package` | Build the distributable ZIP into `dist-zip/` (see [STEPS.md](STEPS.md)) |
 
 ---
 
