@@ -1,9 +1,9 @@
-# Annu Biswas - Portfolio
+# Professor Portfolio
 
-An Astro rebuild of the Wix "Professor" template layout, hosted on GitHub Pages and edited through DecapCMS. Same design and layout as the reference, without its permanent horizontal scrollbar.
+An Astro Site for Professor Portfolio. Compatible with GitHub Pages and edited through DecapCMS. 
 
-- **Live site:** https://annu-biswas.github.io
-- **Content manager:** https://annu-biswas.github.io/admin/
+- **Live site:** https://your-github.github.io
+- **Content manager:** https://your-github.github.io/admin/index.html
 - **Stack:** Astro 7 · Tailwind CSS 4 · Astro Content Collections · astro-seo · @astrojs/sitemap · DecapCMS
 
 ---
