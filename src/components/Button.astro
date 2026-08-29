@@ -1,0 +1,31 @@
+---
+import { isExternal } from '@/lib/settings';
+
+interface Props {
+  href: string;
+  variant?: 'solid' | 'outline' | 'outline-light';
+  class?: string;
+}
+
+const { href, variant = 'solid', class: className } = Astro.props;
+const external = isExternal(href);
+
+const styles = {
+  solid: 'bg-clay text-white hover:bg-clay-dark',
+  outline: 'border border-forest/40 text-forest hover:border-clay hover:text-clay',
+  'outline-light': 'border border-sand/40 text-sand hover:border-clay hover:text-clay',
+} as const;
+---
+
+<a
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'inline-flex items-center justify-center px-7 py-3 text-xs font-bold uppercase tracking-[0.18em] transition-colors',
+    styles[variant],
+    className,
+  ]}
+>
+  <slot />
+</a>

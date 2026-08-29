@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import PostCard from '@/components/PostCard.astro';
+import Pagination from '@/components/Pagination.astro';
+import { getPageIntro, getPublished } from '@/lib/settings';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const intro = await getPageIntro('blog');
+  const posts = (await getPublished('blog')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  // Page 1 is served at /blog; later pages at /blog/2, /blog/3, ...
+  return paginate(posts, { pageSize: intro.perPage ?? 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const intro = await getPageIntro('blog');
+
+// Page 1 keeps the plain title; later pages are labelled so search results and
+// browser history stay distinguishable. They remain indexable — every post is
+// reachable from them, and each post has its own canonical page.
+const isFirst = page.currentPage === 1;
+const title = isFirst
+  ? intro.seoTitle ?? intro.title
+  : `${intro.seoTitle ?? intro.title} — page ${page.currentPage}`;
+---
+
+<BaseLayout title={title} description={intro.seoDescription ?? intro.intro}>
+  <Fragment slot="head">
+    {page.url.prev && <link rel="prev" href={new URL(page.url.prev, Astro.site).href} />}
+    {page.url.next && <link rel="next" href={new URL(page.url.next, Astro.site).href} />}
+  </Fragment>
+
+  <PageHeader title={intro.title} intro={isFirst ? intro.intro : undefined} />
+
+  <section class="band bg-cream">
+    <div class="container-page">
+      {page.data.length === 0 ? (
+        <p class="text-muted">No posts published yet.</p>
+      ) : (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {page.data.map((post) => <PostCard post={post} />)}
+        </div>
+      )}
+
+      <Pagination page={page} base="/blog" label="Blog posts" />
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,115 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+import PostCard from '@/components/PostCard.astro';
+import MediaCard from '@/components/MediaCard.astro';
+import { getHome, getPublished } from '@/lib/settings';
+
+const home = await getHome();
+
+const posts = (await getPublished('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const media = (await getPublished('media'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout image={home.hero.portrait}>
+  <!-- Hero: the portrait straddles the cream and forest bands, as on the reference site -->
+  <section class="hero-band">
+    <div class="container-page pb-16 md:pb-20 lg:pb-28">
+      <div class="grid items-end gap-10 md:grid-cols-12 md:gap-12">
+        <div class="md:col-span-5 lg:col-span-4">
+          <img
+            src={home.hero.portrait}
+            alt={home.hero.portraitAlt}
+            width="600"
+            height="800"
+            fetchpriority="high"
+            decoding="async"
+            class="hero-portrait aspect-3/4 w-full max-w-sm object-cover"
+          />
+        </div>
+
+        <div class="md:col-span-7 lg:col-span-8 lg:pl-6">
+          <h1 class="text-display text-clay">{home.hero.name}</h1>
+          <p class="mt-6 text-sm font-bold tracking-wide text-sand md:text-base">{home.hero.role}</p>
+          <p class="mt-4 max-w-xl leading-relaxed text-sand/85">{home.hero.intro}</p>
+          {home.hero.cta && (
+            <Button href={home.hero.cta.href} variant="outline-light" class="mt-8">
+              {home.hero.cta.label}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Publications -->
+  <section class="band bg-cream">
+    <div class="container-page grid items-center gap-10 md:grid-cols-2 md:gap-14 lg:gap-20">
+      <img
+        src={home.publications.image}
+        alt={home.publications.imageAlt}
+        width="900"
+        height="1100"
+        loading="lazy"
+        decoding="async"
+        class="aspect-4/5 w-full object-cover"
+      />
+      <div>
+        <h2 class="text-h2 whitespace-pre-line text-clay">{home.publications.heading}</h2>
+        <p class="mt-6 max-w-lg leading-relaxed text-ink/85">{home.publications.body}</p>
+        {home.publications.cta && (
+          <Button href={home.publications.cta.href} variant="outline" class="mt-8">
+            {home.publications.cta.label}
+          </Button>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Media appearances -->
+  <section class="band bg-olive text-sand">
+    <div class="container-page">
+      <div class="grid gap-8 md:grid-cols-2 md:items-end md:gap-14">
+        <h2 class="text-h2 whitespace-pre-line text-clay">{home.media.heading}</h2>
+        <div>
+          <p class="max-w-lg leading-relaxed text-sand/85">{home.media.body}</p>
+          {home.media.cta && (
+            <Button href={home.media.cta.href} variant="outline-light" class="mt-7">
+              {home.media.cta.label}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {media.map((item) => <MediaCard item={item} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Posts & articles -->
+  <section class="band bg-cream">
+    <div class="container-page">
+      <div class="grid gap-8 md:grid-cols-2 md:items-end md:gap-14">
+        <h2 class="text-h2 whitespace-pre-line text-clay">{home.posts.heading}</h2>
+        <div>
+          <p class="max-w-lg leading-relaxed text-ink/85">{home.posts.body}</p>
+          {home.posts.cta && (
+            <Button href={home.posts.cta.href} variant="outline" class="mt-7">
+              {home.posts.cta.label}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

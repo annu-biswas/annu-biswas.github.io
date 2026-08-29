@@ -1,0 +1,39 @@
+{
+  "hero": {
+    "name": "Jonah Doe PhD",
+    "role": "Department of History, Greenhill University, CA",
+    "intro": "I study how communities remember - and how archives decide what gets remembered. My work moves between the reading room and the classroom, and I write for anyone who has ever wondered why the past looks the way it does.",
+    "portrait": "/images/portrait.jpg",
+    "portraitAlt": "Portrait of Jonah Doe",
+    "cta": {
+      "label": "Read All",
+      "href": "/blog"
+    }
+  },
+  "publications": {
+    "heading": "Publications",
+    "body": "Two decades of peer-reviewed articles, chapters and monographs on nineteenth-century social history. Every entry links out to the publisher or an open-access copy where one exists.",
+    "image": "https://cdn2.penguin.com.au/covers/original/9781784870799.jpg",
+    "imageAlt": "A stack of academic books on a desk",
+    "cta": {
+      "label": "Browse Publications",
+      "href": "/publications"
+    }
+  },
+  "media": {
+    "heading": "Media\nAppearances",
+    "body": "Lectures, documentary contributions and radio conversations - a running record of the work outside the page.",
+    "cta": {
+      "label": "Watch Now",
+      "href": "/events"
+    }
+  },
+  "posts": {
+    "heading": "Posts\n& Articles",
+    "body": "Shorter pieces written between projects: notes from the archive, teaching reflections and the occasional argument.",
+    "cta": {
+      "label": "Read All",
+      "href": "/blog"
+    }
+  }
+}

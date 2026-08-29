@@ -1,0 +1,229 @@
+---
+import { getSite, isExternal } from '@/lib/settings';
+
+const site = await getSite();
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const isCurrent = (href: string) => {
+  const target = href.replace(/\/+$/, '') || '/';
+  return target === '/' ? path === '/' : path === target || path.startsWith(`${target}/`);
+};
+
+const linkAttrs = (item: { href: string; external?: boolean }) =>
+  item.external || isExternal(item.href)
+    ? { target: '_blank', rel: 'noopener noreferrer' }
+    : {};
+---
+
+<header class="site-header sticky top-0 z-50 border-b border-forest/10 bg-cream/95 backdrop-blur-sm">
+  <a
+    href="#main"
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-xs focus:bg-forest focus:px-4 focus:py-2 focus:text-sand"
+  >
+    Skip to content
+  </a>
+
+  <div class="container-page flex items-center justify-between gap-4 py-4 lg:py-5">
+    <a href="/" class="group min-w-0 shrink" aria-label={`${site.siteName} - home`}>
+      {site.logoImage ? (
+        <img src={site.logoImage} alt={site.siteName} class="h-9 w-auto lg:h-11" width="220" height="44" />
+      ) : (
+        <span class="block truncate font-serif text-lg leading-tight text-clay transition-colors group-hover:text-clay-dark sm:text-xl lg:text-2xl">
+          {site.logoText}
+        </span>
+      )}
+      <span class="mt-1 hidden font-serif text-[0.8125rem] leading-snug text-clay/80 sm:block">
+        {site.tagline}
+      </span>
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="hidden lg:block" aria-label="Primary">
+      <ul class="flex items-center gap-x-7 xl:gap-x-9">
+        {site.headerLinks.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              {...linkAttrs(item)}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class:list={[
+                'relative text-[0.9375rem] transition-colors hover:text-clay',
+                'after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-clay after:transition-all',
+                isCurrent(item.href)
+                  ? 'text-clay after:w-full'
+                  : 'text-forest after:w-0 hover:after:w-full',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Mobile / tablet toggle -->
+    <button
+      type="button"
+      id="nav-open"
+      class="-mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xs text-forest lg:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span class="sr-only">Open navigation</span>
+      <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path stroke-linecap="round" d="M3 6h18M3 12h18M3 18h18" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!--
+  Full-screen mobile panel, sliding in from the right. The shell is exactly the
+  viewport and clips, so the off-screen panel cannot widen the document.
+-->
+<div id="mobile-nav" class="nav-shell lg:hidden" data-open="false" aria-hidden="true">
+  <div class="nav-panel">
+    <div class="container-page flex items-center justify-between gap-4 py-4">
+      <span class="font-serif text-lg leading-tight text-clay sm:text-xl">{site.logoText}</span>
+      <button
+        type="button"
+        id="nav-close"
+        class="-mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xs text-sand"
+      >
+        <span class="sr-only">Close navigation</span>
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" d="M5 5l14 14M19 5L5 19" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="container-page flex flex-1 flex-col justify-center py-8" aria-label="Primary (mobile)">
+      <ul>
+        {site.headerLinks.map((item, index) => (
+          <li class="nav-item border-b border-sand/10 last:border-0" style={`--nav-index: ${index}`}>
+            <a
+              href={item.href}
+              {...linkAttrs(item)}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class:list={[
+                'block py-4 font-serif text-2xl transition-colors sm:text-3xl',
+                isCurrent(item.href) ? 'text-clay' : 'text-sand hover:text-clay',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    {site.social.length > 0 && (
+      <div
+        class="nav-item container-page pb-10"
+        style={`--nav-index: ${site.headerLinks.length}`}
+      >
+        <ul class="flex flex-wrap gap-x-6 gap-y-2">
+          {site.social.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-sand/70 transition-colors hover:text-clay"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</div>
+
+<script>
+  const shell = document.getElementById('mobile-nav');
+  const openButton = document.getElementById('nav-open');
+  const closeButton = document.getElementById('nav-close');
+
+  if (shell && openButton && closeButton) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const CLOSE_MS = 320;
+
+    const focusable = () =>
+      [...shell.querySelectorAll<HTMLElement>('a[href], button')].filter(
+        (el) => el.offsetParent !== null
+      );
+
+    const isOpen = () => shell.dataset.open === 'true';
+
+    const setOpen = (open: boolean) => {
+      shell.dataset.open = String(open);
+      shell.setAttribute('aria-hidden', String(!open));
+      openButton.setAttribute('aria-expanded', String(open));
+
+      if (open) {
+        closeButton.focus();
+      } else {
+        openButton.focus();
+      }
+    };
+
+    openButton.addEventListener('click', () => setOpen(true));
+    closeButton.addEventListener('click', () => setOpen(false));
+
+    document.addEventListener('keydown', (event) => {
+      if (!isOpen()) return;
+
+      if (event.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+
+      // Keep focus inside the panel while it covers the page.
+      if (event.key === 'Tab') {
+        const items = focusable();
+        if (items.length === 0) return;
+
+        const first = items[0];
+        const last = items[items.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    // Let the panel slide out before navigating, so the view transition
+    // snapshots a closed menu rather than an open one.
+    shell.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement | null)?.closest('a');
+      if (!link || !isOpen()) return;
+
+      const modified =
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+      if (modified || link.target === '_blank') return;
+
+      event.preventDefault();
+      setOpen(false);
+
+      const href = link.href;
+      if (reduceMotion.matches) {
+        window.location.href = href;
+      } else {
+        window.setTimeout(() => {
+          window.location.href = href;
+        }, CLOSE_MS);
+      }
+    });
+
+    // Reset when the viewport grows past the mobile breakpoint.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+      if (event.matches && isOpen()) setOpen(false);
+    });
+  }
+</script>

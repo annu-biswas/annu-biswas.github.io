@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import EventCard from '@/components/EventCard.astro';
+import MediaCard from '@/components/MediaCard.astro';
+import { getPageIntro, getPublished } from '@/lib/settings';
+
+const page = await getPageIntro('events');
+const mediaPage = await getPageIntro('media');
+
+const now = new Date();
+const events = await getPublished('events');
+
+const upcoming = events
+  .filter((entry) => (entry.data.endDate ?? entry.data.startDate) >= now)
+  .sort((a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf());
+
+const past = events
+  .filter((entry) => (entry.data.endDate ?? entry.data.startDate) < now)
+  .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf());
+
+const media = (await getPublished('media')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title={page.seoTitle ?? page.title} description={page.seoDescription ?? page.intro}>
+  <PageHeader title={page.title} intro={page.intro} />
+
+  <section class="band bg-cream">
+    <div class="container-page">
+      <h2 class="text-h3 text-clay">Upcoming</h2>
+      {upcoming.length === 0 ? (
+        <p class="mt-6 text-muted">Nothing scheduled at the moment - please check back.</p>
+      ) : (
+        <div class="mt-6">
+          {upcoming.map((event) => <EventCard event={event} />)}
+        </div>
+      )}
+
+      {past.length > 0 && (
+        <div class="mt-20">
+          <h2 class="text-h3 text-clay">Past</h2>
+          <div class="mt-6">
+            {past.map((event) => <EventCard event={event} past />)}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {media.length > 0 && (
+    <section id="media" class="band bg-olive text-sand">
+      <div class="container-page">
+        <h2 class="text-h2 text-clay">{mediaPage.title}</h2>
+        <p class="mt-5 max-w-2xl leading-relaxed text-sand/85">{mediaPage.intro}</p>
+        <div class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {media.map((item) => <MediaCard item={item} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

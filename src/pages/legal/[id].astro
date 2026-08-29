@@ -1,0 +1,30 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import { formatDate, getPublished } from '@/lib/settings';
+
+export async function getStaticPaths() {
+  const pages = await getPublished('legal');
+  return pages.map((page) => ({ params: { id: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<BaseLayout
+  title={page.data.seo?.title ?? page.data.title}
+  description={page.data.seo?.description}
+  noindex={page.data.seo?.noindex}
+>
+  <PageHeader title={page.data.title} eyebrow={`Last updated ${formatDate(page.data.updated)}`} />
+
+  <section class="band bg-cream">
+    <div class="container-page">
+      <div class="rich max-w-2xl leading-relaxed text-ink/90">
+        <Content />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,12 @@
+{
+  "title": "Contact",
+  "intro": "For speaking invitations, media requests, doctoral supervision enquiries or anything else - send a note and I will reply within a week or so.",
+  "image": "/images/contact.jpg",
+  "imageAlt": "A quiet university reading room",
+  "formNotice": "This form is a demonstration and does not yet send messages. Please email directly in the meantime.",
+  "details": [
+    { "label": "Email", "value": "hello@annubiswas.com" },
+    { "label": "Office", "value": "Room 214, Faculty of History, Greenhill University" },
+    { "label": "Office hours", "value": "Tuesdays 14:00–16:00, term time" }
+  ]
+}

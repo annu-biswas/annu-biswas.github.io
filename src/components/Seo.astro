@@ -1,0 +1,81 @@
+---
+import { SEO } from 'astro-seo';
+import { getSite } from '@/lib/settings';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  publishedDate?: Date;
+  modifiedDate?: Date;
+}
+
+const {
+  title,
+  description,
+  image,
+  noindex = false,
+  type = 'website',
+  publishedDate,
+  modifiedDate,
+} = Astro.props;
+
+const site = await getSite();
+
+const pageTitle = title ? `${title} | ${site.siteName}` : `${site.siteName} - ${site.tagline}`;
+const pageDescription = description ?? site.defaultDescription;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site).href;
+const shareImage = new URL(image ?? site.defaultShareImage, Astro.site).href;
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.siteName,
+  jobTitle: site.tagline,
+  description: site.defaultDescription,
+  url: Astro.site?.href,
+  image: shareImage,
+  email: site.email ? `mailto:${site.email}` : undefined,
+  sameAs: site.social.map((s) => s.href),
+};
+
+const articleLd =
+  type === 'article'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: title,
+        description: pageDescription,
+        image: shareImage,
+        datePublished: publishedDate?.toISOString(),
+        dateModified: (modifiedDate ?? publishedDate)?.toISOString(),
+        author: { '@type': 'Person', name: site.siteName },
+        mainEntityOfPage: canonical,
+      }
+    : null;
+---
+
+<SEO
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonical}
+  noindex={noindex}
+  nofollow={noindex}
+  openGraph={{
+    basic: { title: pageTitle, type, image: shareImage, url: canonical },
+    optional: { description: pageDescription, siteName: site.siteName },
+    image: { alt: pageTitle },
+  }}
+  twitter={{
+    card: 'summary_large_image',
+    title: pageTitle,
+    description: pageDescription,
+    image: shareImage,
+    imageAlt: pageTitle,
+  }}
+/>
+
+<script type="application/ld+json" set:html={JSON.stringify(personLd)} />
+{articleLd && <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />}

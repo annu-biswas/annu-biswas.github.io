@@ -1,0 +1,43 @@
+---
+import '@/styles/global.css';
+import Seo from '@/components/Seo.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { getSite } from '@/lib/settings';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  publishedDate?: Date;
+  modifiedDate?: Date;
+  bodyClass?: string;
+}
+
+const { bodyClass, ...seo } = Astro.props;
+const site = await getSite();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content={site.themeColor} />
+    <link rel="icon" href={site.favicon} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.siteName} - Blog`} href="/rss.xml" />
+    <Seo {...seo} />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

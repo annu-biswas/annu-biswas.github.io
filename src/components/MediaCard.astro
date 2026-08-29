@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '@/lib/settings';
+
+interface Props {
+  item: CollectionEntry<'media'>;
+}
+
+const { item } = Astro.props;
+---
+
+<article class="group flex h-full flex-col">
+  <a
+    href={item.data.watchUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="relative block overflow-hidden bg-forest-soft"
+    aria-label={`Watch: ${item.data.title}`}
+  >
+    <img
+      src={item.data.thumbnail}
+      alt={item.data.thumbnailAlt}
+      width="1200"
+      height="675"
+      loading="lazy"
+      decoding="async"
+      class="aspect-video w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+    />
+    <span class="absolute inset-0 grid place-items-center" aria-hidden="true">
+      <span class="grid h-14 w-14 place-items-center rounded-full bg-clay/90 transition-transform duration-300 group-hover:scale-110">
+        <svg viewBox="0 0 24 24" class="ml-0.5 h-6 w-6 fill-white"><path d="M8 5v14l11-7z" /></svg>
+      </span>
+    </span>
+  </a>
+  <div class="pt-5">
+    <p class="eyebrow text-clay">{item.data.outlet}</p>
+    <h3 class="mt-2 text-h3 text-sand">{item.data.title}</h3>
+    {item.data.summary && <p class="mt-2 text-sm leading-relaxed text-sand/75">{item.data.summary}</p>}
+    <p class="mt-3 text-xs text-sand/50">
+      <time datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>
+    </p>
+  </div>
+</article>

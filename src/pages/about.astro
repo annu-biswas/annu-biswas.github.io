@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+import { getAbout, getSite } from '@/lib/settings';
+
+const about = await getAbout();
+const site = await getSite();
+---
+
+<BaseLayout
+  title={about.seo?.title ?? about.title}
+  description={about.seo?.description ?? site.defaultDescription}
+  image={about.seo?.image ?? about.portrait}
+  noindex={about.seo?.noindex}
+>
+  <section class="bg-forest">
+    <div class="container-page py-16 md:py-24">
+      <div class="grid gap-12 md:grid-cols-12 md:gap-14">
+        <div class="md:col-span-5 lg:col-span-4">
+          <img
+            src={about.portrait}
+            alt={about.portraitAlt}
+            width="800"
+            height="1000"
+            fetchpriority="high"
+            decoding="async"
+            class="aspect-4/5 w-full object-cover md:sticky md:top-32"
+          />
+        </div>
+
+        <div class="md:col-span-7 lg:col-span-8">
+          <h1 class="text-h2 text-clay">{about.title}</h1>
+
+          <div class="mt-10 space-y-12">
+            {about.sections.map((section) => (
+              <div>
+                <h2 class="text-h3 text-sand">{section.heading}</h2>
+                <div class="prose-body mt-4 max-w-prose text-sand/85">
+                  {section.body.split('\n\n').map((paragraph) => (
+                    <p class="mt-5 first:mt-0 leading-relaxed">{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {about.cvFile && (
+            <Button href={about.cvFile} variant="outline-light" class="mt-12">
+              {about.cvLabel ?? 'Download CV'}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

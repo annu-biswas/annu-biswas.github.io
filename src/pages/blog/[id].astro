@@ -1,0 +1,98 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
+import { formatDate, getPublished } from '@/lib/settings';
+
+export async function getStaticPaths() {
+  const posts = await getPublished('blog');
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const coverTransition = `post-cover-${post.id.replace(/[^a-zA-Z0-9-]/g, '-')}`;
+
+const related = (await getPublished('blog'))
+  .filter((entry) => entry.id !== post.id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
+---
+
+<BaseLayout
+  title={post.data.seo?.title ?? post.data.title}
+  description={post.data.seo?.description ?? post.data.description}
+  image={post.data.seo?.image ?? post.data.cover}
+  noindex={post.data.seo?.noindex}
+  type="article"
+  publishedDate={post.data.pubDate}
+  modifiedDate={post.data.updatedDate}
+>
+  <article>
+    <header class="bg-forest">
+      <div class="container-page py-16 md:py-20">
+        <p class="eyebrow text-clay">{post.data.category}</p>
+        <h1 class="mt-4 max-w-4xl text-h2 text-clay">{post.data.title}</h1>
+        <p class="mt-5 max-w-2xl leading-relaxed text-sand/85">{post.data.description}</p>
+        <p class="mt-6 text-xs uppercase tracking-[0.18em] text-sand/60">
+          <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+          {post.data.updatedDate && <span> · updated {formatDate(post.data.updatedDate)}</span>}
+        </p>
+      </div>
+    </header>
+
+    <img
+      src={post.data.cover}
+      alt={post.data.coverAlt}
+      width="1200"
+      height="800"
+      fetchpriority="high"
+      decoding="async"
+      class="aspect-16/9 w-full object-cover"
+      style={`view-transition-name: ${coverTransition}; view-transition-class: post-cover`}
+    />
+
+    <div class="band bg-cream">
+      <div class="container-page">
+        <div class="rich mx-auto max-w-2xl leading-relaxed text-ink/90">
+          <Content />
+        </div>
+
+        {post.data.tags.length > 0 && (
+          <ul class="mx-auto mt-12 flex max-w-2xl flex-wrap gap-2.5">
+            {post.data.tags.map((tag) => (
+              <li class="border border-forest/20 px-3 py-1 text-xs uppercase tracking-[0.12em] text-muted">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div class="mx-auto mt-12 max-w-2xl border-t border-forest/15 pt-8">
+          <ShareButtons
+            title={post.data.title}
+            summary={post.data.description}
+            path={`/blog/${post.id}`}
+          />
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="band bg-sand">
+      <div class="container-page">
+        <h2 class="text-h3 text-clay">Keep reading</h2>
+        <div class="mt-8 grid gap-8 sm:grid-cols-2">
+          {related.map((entry) => (
+            <a href={`/blog/${entry.id}`} class="group block">
+              <h3 class="text-xl text-forest transition-colors group-hover:text-clay">{entry.data.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{entry.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

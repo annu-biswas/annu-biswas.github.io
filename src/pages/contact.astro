@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import { getContact, getSite } from '@/lib/settings';
+
+const contact = await getContact();
+const site = await getSite();
+
+const fieldClass =
+  'w-full border border-forest/25 bg-white px-4 py-3 text-base text-ink placeholder:text-muted/60 focus:border-clay focus:outline-none';
+---
+
+<BaseLayout
+  title={contact.seo?.title ?? contact.title}
+  description={contact.seo?.description ?? contact.intro}
+  image={contact.seo?.image ?? contact.image}
+  noindex={contact.seo?.noindex}
+>
+  <PageHeader title={contact.title} intro={contact.intro} />
+
+  <section class="band bg-cream">
+    <div class="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-7">
+        <!--
+          Deliberately non-functional: no action and no backend. Submission is
+          cancelled in the browser and a notice is shown instead.
+        -->
+        <form id="contact-form" novalidate class="space-y-5">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="name" class="eyebrow block text-muted">Name</label>
+              <input id="name" name="name" type="text" autocomplete="name" class={`mt-2 ${fieldClass}`} />
+            </div>
+            <div>
+              <label for="email" class="eyebrow block text-muted">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" class={`mt-2 ${fieldClass}`} />
+            </div>
+          </div>
+
+          <div>
+            <label for="subject" class="eyebrow block text-muted">Subject</label>
+            <input id="subject" name="subject" type="text" class={`mt-2 ${fieldClass}`} />
+          </div>
+
+          <div>
+            <label for="message" class="eyebrow block text-muted">Message</label>
+            <textarea id="message" name="message" rows="7" class={`mt-2 ${fieldClass} resize-y`}></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="inline-flex bg-clay px-8 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-clay-dark"
+          >
+            Send Message
+          </button>
+
+          <p
+            id="contact-notice"
+            role="status"
+            hidden
+            class="border-l-2 border-clay bg-sand px-4 py-3 text-sm leading-relaxed text-ink/85"
+          >
+            {contact.formNotice}
+          </p>
+        </form>
+      </div>
+
+      <aside class="lg:col-span-5">
+        {contact.image && (
+          <img
+            src={contact.image}
+            alt={contact.imageAlt ?? ''}
+            width="1000"
+            height="800"
+            loading="lazy"
+            decoding="async"
+            class="aspect-4/3 w-full object-cover"
+          />
+        )}
+
+        <dl class="mt-8 space-y-5">
+          {contact.details.map((detail) => (
+            <div>
+              <dt class="eyebrow text-muted">{detail.label}</dt>
+              <dd class="mt-1 text-ink/85">{detail.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {site.social.length > 0 && (
+          <div class="mt-8">
+            <h2 class="eyebrow text-muted">Elsewhere</h2>
+            <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+              {site.social.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm text-clay underline underline-offset-4"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const notice = document.getElementById('contact-notice');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (notice) {
+      notice.hidden = false;
+      notice.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+</script>

@@ -1,0 +1,109 @@
+---
+import type { Page } from 'astro';
+
+interface Props {
+  page: Page<unknown>;
+  /** Route the listing lives at, e.g. `/blog`. Page 1 is the bare path. */
+  base: string;
+  /** Accessible label, e.g. "Blog posts". */
+  label?: string;
+}
+
+const { page, base, label = 'Pages' } = Astro.props;
+
+const hrefFor = (n: number) => (n === 1 ? base : `${base}/${n}`);
+
+/**
+ * Compact page list: always the first and last page, plus a window around the
+ * current one, with gaps collapsed to an ellipsis. Keeps the control a fixed
+ * width no matter how many pages accumulate.
+ */
+function pageNumbers(current: number, total: number) {
+  const window = new Set<number>([1, total, current - 1, current, current + 1]);
+  const shown = [...window].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+
+  const items: (number | 'gap')[] = [];
+  shown.forEach((n, index) => {
+    if (index > 0 && n - shown[index - 1] > 1) items.push('gap');
+    items.push(n);
+  });
+  return items;
+}
+
+const items = pageNumbers(page.currentPage, page.lastPage);
+
+const linkBase =
+  'inline-flex h-11 min-w-11 items-center justify-center px-3 font-serif text-lg transition-colors';
+---
+
+{
+  page.lastPage > 1 && (
+    <nav class="mt-16 border-t border-forest/15 pt-8" aria-label={label}>
+      <ul class="flex flex-wrap items-center justify-center gap-2">
+        <li>
+          {page.url.prev ? (
+            <a
+              href={page.url.prev}
+              rel="prev"
+              class={`${linkBase} border border-forest/20 text-forest hover:border-clay hover:text-clay`}
+            >
+              <span aria-hidden="true">&larr;</span>
+              <span class="ml-2 text-xs font-bold uppercase tracking-[0.16em]">Newer</span>
+            </a>
+          ) : (
+            <span class={`${linkBase} border border-forest/10 text-muted/40`} aria-hidden="true">
+              <span>&larr;</span>
+              <span class="ml-2 text-xs font-bold uppercase tracking-[0.16em]">Newer</span>
+            </span>
+          )}
+        </li>
+
+        {items.map((item) =>
+          item === 'gap' ? (
+            <li aria-hidden="true" class="px-1 text-muted">
+              &hellip;
+            </li>
+          ) : (
+            <li>
+              {item === page.currentPage ? (
+                <span class={`${linkBase} border border-clay bg-clay text-white`} aria-current="page">
+                  {item}
+                </span>
+              ) : (
+                <a
+                  href={hrefFor(item)}
+                  class={`${linkBase} border border-forest/20 text-forest hover:border-clay hover:text-clay`}
+                >
+                  <span class="sr-only">Page </span>
+                  {item}
+                </a>
+              )}
+            </li>
+          )
+        )}
+
+        <li>
+          {page.url.next ? (
+            <a
+              href={page.url.next}
+              rel="next"
+              class={`${linkBase} border border-forest/20 text-forest hover:border-clay hover:text-clay`}
+            >
+              <span class="mr-2 text-xs font-bold uppercase tracking-[0.16em]">Older</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          ) : (
+            <span class={`${linkBase} border border-forest/10 text-muted/40`} aria-hidden="true">
+              <span class="mr-2 text-xs font-bold uppercase tracking-[0.16em]">Older</span>
+              <span>&rarr;</span>
+            </span>
+          )}
+        </li>
+      </ul>
+
+      <p class="mt-5 text-center text-xs uppercase tracking-[0.16em] text-muted">
+        Page {page.currentPage} of {page.lastPage}
+      </p>
+    </nav>
+  )
+}

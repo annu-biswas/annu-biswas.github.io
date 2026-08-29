@@ -1,0 +1,21 @@
+{
+  "title": "About",
+  "portrait": "/images/about-portrait.jpg",
+  "portraitAlt": "Annu Biswas at her desk",
+  "cvLabel": "Download CV",
+  "cvFile": "/files/cv.pdf",
+  "sections": [
+    {
+      "heading": "Bio",
+      "body": "I am a historian of the long nineteenth century, working primarily on labour, migration and the institutions that recorded both. My first book traced the paper trail of a single port town across sixty years; my current project asks what happens to a community's history when its archive burns.\n\nI teach undergraduate and graduate seminars at Greenhill University, and I supervise doctoral work on archival theory, memory studies and the social history of the British Atlantic."
+    },
+    {
+      "heading": "Education",
+      "body": "PhD, History - University of Edinburgh, 2009. Dissertation on port labour and municipal record-keeping, supervised by Professor M. Adeyemi.\n\nMA, Modern History - King's College London, 2004.\n\nBA (Hons), History - University of Delhi, 2002."
+    },
+    {
+      "heading": "Employment",
+      "body": "Professor of History, Greenhill University - 2019 to present.\n\nAssociate Professor, Greenhill University - 2013 to 2019.\n\nLecturer in Modern History, University of Bristol - 2009 to 2013.\n\nVisiting Fellow, Institute of Historical Research - 2016, 2021."
+    }
+  ]
+}

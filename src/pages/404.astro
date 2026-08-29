@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <section class="bg-forest">
+    <div class="container-page py-24 md:py-36">
+      <p class="eyebrow text-sand/60">Error 404</p>
+      <h1 class="mt-4 text-display text-clay">Not found</h1>
+      <p class="mt-5 max-w-lg leading-relaxed text-sand/85">
+        The page you were looking for has moved or never existed. The links below should get you back on course.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-4">
+        <Button href="/">Home</Button>
+        <Button href="/blog" variant="outline-light">Read the blog</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

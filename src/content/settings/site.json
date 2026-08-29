@@ -1,0 +1,89 @@
+{
+  "shortName": "Elite Professor",
+  "copyright": "© 2026 Jonah Doe. All rights reserved.",
+  "headerLinks": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Books",
+      "href": "/books"
+    },
+    {
+      "label": "Publications",
+      "href": "/publications"
+    },
+    {
+      "label": "Events",
+      "href": "/events"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ],
+  "footerNote": "For speaking invitations and press enquiries, please use the contact form.",
+  "social": [
+    {
+      "label": "Google Scholar",
+      "href": "https://scholar.google.com",
+      "external": true
+    },
+    {
+      "label": "ORCID",
+      "href": "https://orcid.org",
+      "external": true
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com",
+      "external": true
+    }
+  ],
+  "phone": "+1 (555) 014 2200",
+  "tagline": "Department of History, Greenhill University, CA",
+  "logoImage": "",
+  "siteName": "Professor Portfolio",
+  "favicon": "/favicon.svg",
+  "address": "Department of History, Greenhill University, CA",
+  "logoText": "Academic Portfolio",
+  "themeColor": "#0b322b",
+  "defaultDescription": "Historian, author and lecturer. Writing on memory, archives and the long nineteenth century.",
+  "email": "hello@random.com",
+  "defaultShareImage": "/images/share.jpg",
+  "footerLinks": [
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Books",
+      "href": "/books"
+    },
+    {
+      "label": "Publications",
+      "href": "/publications"
+    },
+    {
+      "label": "Events",
+      "href": "/events"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ]
+}

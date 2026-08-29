@@ -1,0 +1,473 @@
+# ---------------------------------------------------------------------------
+# DecapCMS configuration
+#
+# Local editing:  run `npm run cms` in a second terminal alongside `npm run dev`,
+#                 then open http://localhost:4321/admin/ - no login required.
+# Production:     `base_url` must point at a running OAuth broker. See README.
+# ---------------------------------------------------------------------------
+
+backend:
+  name: github
+  repo: annu-biswas/annu-biswas.github.io
+  branch: main
+  base_url: https://decap-oauth.example.workers.dev
+  auth_endpoint: auth
+
+local_backend: true
+
+media_folder: public/images
+public_folder: /images
+
+site_url: https://annu-biswas.github.io
+display_url: https://annu-biswas.github.io
+logo_url: https://annu-biswas.github.io/favicon.svg
+
+publish_mode: simple
+
+collections:
+  # -------------------------------------------------------------------------
+  # Site-wide settings - header, footer, logo, favicon, SEO defaults
+  # -------------------------------------------------------------------------
+  - name: settings
+    label: Site Settings
+    files:
+      - name: site
+        label: General, Header & Footer
+        file: src/content/settings/site.json
+        format: json
+        description: Logo, favicon, navigation links, footer links and social profiles.
+        fields:
+          - { name: siteName, label: Site name, widget: string }
+          - { name: shortName, label: Short name, widget: string }
+          - { name: tagline, label: Tagline (shown under the logo), widget: string }
+          - { name: defaultDescription, label: Default SEO description, widget: text }
+          - { name: defaultShareImage, label: Default social share image, widget: image }
+          - name: logoText
+            label: Logo text
+            widget: string
+            hint: Used when no logo image is set.
+          - name: logoImage
+            label: Logo image
+            widget: image
+            required: false
+            hint: Optional. Replaces the logo text in the header.
+          - { name: favicon, label: Favicon, widget: file }
+          - name: themeColor
+            label: Browser theme colour
+            widget: string
+            hint: A hex colour such as #0b322b.
+          - { name: email, label: Email, widget: string, required: false }
+          - { name: phone, label: Phone, widget: string, required: false }
+          - { name: address, label: Address, widget: string, required: false }
+          - name: headerLinks
+            label: Header navigation
+            label_singular: link
+            widget: list
+            summary: "{{fields.label}} -> {{fields.href}}"
+            fields:
+              - { name: label, label: Label, widget: string }
+              - name: href
+                label: Link
+                widget: string
+                hint: An internal path such as /about, or a full URL.
+              - { name: external, label: Open in a new tab, widget: boolean, default: false, required: false }
+          - name: footerLinks
+            label: Footer navigation
+            label_singular: link
+            widget: list
+            summary: "{{fields.label}} -> {{fields.href}}"
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: href, label: Link, widget: string }
+              - { name: external, label: Open in a new tab, widget: boolean, default: false, required: false }
+          - name: social
+            label: Social / profile links
+            label_singular: profile
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: href, label: URL, widget: string }
+              - { name: external, label: Open in a new tab, widget: boolean, default: true, required: false }
+          - { name: footerNote, label: Footer note, widget: text }
+          - { name: copyright, label: Copyright line, widget: string }
+
+      - name: home
+        label: Home Page
+        file: src/content/settings/home.json
+        format: json
+        fields:
+          - name: hero
+            label: Hero
+            widget: object
+            fields:
+              - { name: name, label: Name / headline, widget: string }
+              - { name: role, label: Role line, widget: string }
+              - { name: intro, label: Intro paragraph, widget: text }
+              - { name: portrait, label: Portrait image, widget: image }
+              - { name: portraitAlt, label: Portrait alt text, widget: string }
+              - name: cta
+                label: Button
+                widget: object
+                required: false
+                fields:
+                  - { name: label, label: Button label, widget: string }
+                  - { name: href, label: Button link, widget: string }
+          - name: publications
+            label: Publications section
+            widget: object
+            fields:
+              - { name: heading, label: Heading, widget: string }
+              - { name: body, label: Body, widget: text }
+              - { name: image, label: Image, widget: image }
+              - { name: imageAlt, label: Image alt text, widget: string }
+              - name: cta
+                label: Button
+                widget: object
+                required: false
+                fields:
+                  - { name: label, label: Button label, widget: string }
+                  - { name: href, label: Button link, widget: string }
+          - name: media
+            label: Media section
+            widget: object
+            fields:
+              - name: heading
+                label: Heading
+                widget: text
+                hint: A line break here becomes a line break on the page.
+              - { name: body, label: Body, widget: text }
+              - name: cta
+                label: Button
+                widget: object
+                required: false
+                fields:
+                  - { name: label, label: Button label, widget: string }
+                  - { name: href, label: Button link, widget: string }
+          - name: posts
+            label: Posts section
+            widget: object
+            fields:
+              - name: heading
+                label: Heading
+                widget: text
+                hint: A line break here becomes a line break on the page.
+              - { name: body, label: Body, widget: text }
+              - name: cta
+                label: Button
+                widget: object
+                required: false
+                fields:
+                  - { name: label, label: Button label, widget: string }
+                  - { name: href, label: Button link, widget: string }
+
+      - name: about
+        label: About Page
+        file: src/content/settings/about.json
+        format: json
+        fields:
+          - { name: title, label: Page title, widget: string }
+          - { name: portrait, label: Portrait image, widget: image }
+          - { name: portraitAlt, label: Portrait alt text, widget: string }
+          - { name: cvLabel, label: CV button label, widget: string, required: false }
+          - { name: cvFile, label: CV file, widget: file, required: false }
+          - name: sections
+            label: Sections
+            label_singular: section
+            widget: list
+            summary: "{{fields.heading}}"
+            fields:
+              - { name: heading, label: Heading, widget: string }
+              - name: body
+                label: Body
+                widget: text
+                hint: Leave a blank line between paragraphs.
+          - name: seo
+            label: SEO overrides
+            widget: object
+            required: false
+            collapsed: true
+            fields:
+              - { name: title, label: SEO title, widget: string, required: false }
+              - { name: description, label: SEO description, widget: text, required: false }
+              - { name: image, label: Share image, widget: image, required: false }
+              - { name: noindex, label: Hide from search engines, widget: boolean, default: false, required: false }
+
+      - name: contact
+        label: Contact Page
+        file: src/content/settings/contact.json
+        format: json
+        fields:
+          - { name: title, label: Page title, widget: string }
+          - { name: intro, label: Intro, widget: text }
+          - { name: image, label: Image, widget: image, required: false }
+          - { name: imageAlt, label: Image alt text, widget: string, required: false }
+          - name: formNotice
+            label: Form notice
+            widget: text
+            hint: Shown when someone submits the form. The form does not send messages yet.
+          - name: details
+            label: Contact details
+            label_singular: detail
+            widget: list
+            summary: "{{fields.label}}: {{fields.value}}"
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: value, label: Value, widget: string }
+          - name: seo
+            label: SEO overrides
+            widget: object
+            required: false
+            collapsed: true
+            fields:
+              - { name: title, label: SEO title, widget: string, required: false }
+              - { name: description, label: SEO description, widget: text, required: false }
+              - { name: image, label: Share image, widget: image, required: false }
+              - { name: noindex, label: Hide from search engines, widget: boolean, default: false, required: false }
+
+      - name: pages
+        label: Listing Page Headings
+        file: src/content/settings/pages.json
+        format: json
+        description: Headings, intros and SEO copy for the Blog, Books, Publications, Events and Media listings.
+        fields:
+          - name: pages
+            label: Pages
+            label_singular: page
+            widget: list
+            summary: "{{fields.key}} - {{fields.title}}"
+            fields:
+              - name: key
+                label: Key
+                widget: string
+                hint: "Do not change. One of: blog, books, publications, events, media."
+              - { name: title, label: Heading, widget: string }
+              - { name: intro, label: Intro, widget: text }
+              - { name: seoTitle, label: SEO title, widget: string, required: false }
+              - { name: seoDescription, label: SEO description, widget: text, required: false }
+              - name: perPage
+                label: Posts per page
+                widget: number
+                value_type: int
+                required: false
+                min: 1
+                max: 60
+                hint: Blog only. Leave blank for 9. Later pages appear at /blog/2, /blog/3 and so on.
+
+  # -------------------------------------------------------------------------
+  # Blog
+  # -------------------------------------------------------------------------
+  - name: blog
+    label: Blog Posts
+    label_singular: Blog Post
+    folder: src/content/blog
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [pubDate, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Summary, widget: text }
+      - name: pubDate
+        label: Published
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - name: updatedDate
+        label: Updated
+        widget: datetime
+        required: false
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - { name: cover, label: Cover image, widget: image }
+      - { name: coverAlt, label: Cover alt text, widget: string, default: "", required: false }
+      - { name: category, label: Category, widget: string, default: Article }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: featured, label: Featured, widget: boolean, default: false, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false }
+      - name: seo
+        label: SEO overrides
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: title, label: SEO title, widget: string, required: false }
+          - { name: description, label: SEO description, widget: text, required: false }
+          - { name: image, label: Share image, widget: image, required: false }
+          - { name: noindex, label: Hide from search engines, widget: boolean, default: false, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  # -------------------------------------------------------------------------
+  # Books
+  # -------------------------------------------------------------------------
+  - name: books
+    label: Books
+    label_singular: Book
+    folder: src/content/books
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [order, year, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: subtitle, label: Subtitle, widget: string, required: false }
+      - { name: cover, label: Cover image, widget: image }
+      - { name: coverAlt, label: Cover alt text, widget: string, default: "", required: false }
+      - { name: publisher, label: Publisher, widget: string, required: false }
+      - { name: year, label: Year, widget: number, value_type: int, required: false }
+      - { name: isbn, label: ISBN, widget: string, required: false }
+      - { name: blurb, label: Blurb, widget: text }
+      - name: order
+        label: Sort order
+        widget: number
+        value_type: int
+        default: 0
+        hint: Lower numbers appear first.
+      - name: buyLinks
+        label: Buy links
+        label_singular: link
+        widget: list
+        required: false
+        summary: "{{fields.label}}"
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: href, label: URL, widget: string }
+          - { name: external, label: Open in a new tab, widget: boolean, default: true, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false }
+      - { name: body, label: Notes, widget: markdown, required: false }
+
+  # -------------------------------------------------------------------------
+  # Publications
+  # -------------------------------------------------------------------------
+  - name: publications
+    label: Publications
+    label_singular: Publication
+    folder: src/content/publications
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [year, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: authors, label: Authors, widget: string }
+      - { name: venue, label: Journal / venue, widget: string }
+      - { name: year, label: Year, widget: number, value_type: int }
+      - name: type
+        label: Type
+        widget: select
+        default: Journal Article
+        options:
+          - Journal Article
+          - Book Chapter
+          - Conference Paper
+          - Review
+          - Report
+      - { name: doi, label: DOI, widget: string, required: false }
+      - { name: url, label: Link, widget: string, required: false }
+      - { name: abstract, label: Abstract, widget: text, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false }
+      - { name: body, label: Notes, widget: markdown, required: false }
+
+  # -------------------------------------------------------------------------
+  # Events
+  # -------------------------------------------------------------------------
+  - name: events
+    label: Events
+    label_singular: Event
+    folder: src/content/events
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [startDate, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: startDate, label: Starts, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss" }
+      - { name: endDate, label: Ends, widget: datetime, required: false, format: "YYYY-MM-DDTHH:mm:ss" }
+      - { name: location, label: Location, widget: string }
+      - { name: kind, label: Kind, widget: string, default: Lecture }
+      - { name: cover, label: Image, widget: image, required: false }
+      - { name: coverAlt, label: Image alt text, widget: string, default: "", required: false }
+      - { name: summary, label: Summary, widget: text }
+      - { name: registerUrl, label: Registration link, widget: string, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false }
+      - { name: body, label: Details, widget: markdown, required: false }
+
+  # -------------------------------------------------------------------------
+  # Media appearances
+  # -------------------------------------------------------------------------
+  - name: media
+    label: Media Appearances
+    label_singular: Appearance
+    folder: src/content/media
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [date, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: outlet, label: Outlet, widget: string }
+      - name: date
+        label: Date
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - { name: thumbnail, label: Thumbnail, widget: image }
+      - { name: thumbnailAlt, label: Thumbnail alt text, widget: string, default: "", required: false }
+      - { name: watchUrl, label: Watch / listen URL, widget: string }
+      - { name: summary, label: Summary, widget: text, default: "", required: false }
+      - { name: featured, label: Featured, widget: boolean, default: false, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false }
+      - { name: body, label: Notes, widget: markdown, required: false }
+
+  # -------------------------------------------------------------------------
+  # Legal pages
+  # -------------------------------------------------------------------------
+  - name: legal
+    label: Legal Pages
+    label_singular: Legal Page
+    folder: src/content/legal
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [order, title]
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - name: updated
+        label: Last updated
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        format: "YYYY-MM-DD"
+      - { name: order, label: Sort order, widget: number, value_type: int, default: 0 }
+      - { name: showInFooter, label: Show in footer, widget: boolean, default: true }
+      - name: seo
+        label: SEO overrides
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: title, label: SEO title, widget: string, required: false }
+          - { name: description, label: SEO description, widget: text, required: false }
+          - { name: noindex, label: Hide from search engines, widget: boolean, default: false, required: false }
+      - { name: body, label: Body, widget: markdown }

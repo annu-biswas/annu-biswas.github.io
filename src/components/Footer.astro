@@ -1,0 +1,76 @@
+---
+import { getSite, getPublished, isExternal } from '@/lib/settings';
+
+const site = await getSite();
+const legal = (await getPublished('legal'))
+  .filter((entry) => entry.data.showInFooter)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<footer class="site-footer bg-forest text-sand">
+  <div class="container-page py-14 lg:py-20">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div class="lg:col-span-2">
+        <p class="font-serif text-2xl text-clay">{site.logoText}</p>
+        <p class="mt-2 font-serif text-sm text-sand/70">{site.tagline}</p>
+        <p class="mt-5 max-w-sm text-sm leading-relaxed text-sand/80">{site.footerNote}</p>
+      </div>
+
+      <nav aria-label="Footer">
+        <h2 class="eyebrow text-sand/60">Explore</h2>
+        <ul class="mt-4 space-y-2.5">
+          {site.footerLinks.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                target={item.external || isExternal(item.href) ? '_blank' : undefined}
+                rel={item.external || isExternal(item.href) ? 'noopener noreferrer' : undefined}
+                class="text-sm text-sand/80 transition-colors hover:text-clay"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="eyebrow text-sand/60">Elsewhere</h2>
+        <ul class="mt-4 space-y-2.5">
+          {site.social.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-sand/80 transition-colors hover:text-clay"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+          {site.email && (
+            <li>
+              <a href={`mailto:${site.email}`} class="text-sm text-sand/80 transition-colors hover:text-clay">
+                {site.email}
+              </a>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-4 border-t border-sand/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-sand/60">{site.copyright}</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        {legal.map((entry) => (
+          <li>
+            <a href={`/legal/${entry.id}`} class="text-xs text-sand/60 transition-colors hover:text-clay">
+              {entry.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import BookCard from '@/components/BookCard.astro';
+import { getPageIntro, getPublished } from '@/lib/settings';
+
+const page = await getPageIntro('books');
+const books = (await getPublished('books')).sort(
+  (a, b) => a.data.order - b.data.order || (b.data.year ?? 0) - (a.data.year ?? 0)
+);
+---
+
+<BaseLayout title={page.seoTitle ?? page.title} description={page.seoDescription ?? page.intro}>
+  <PageHeader title={page.title} intro={page.intro} />
+
+  <section class="band bg-cream">
+    <div class="container-page">
+      {books.length === 0 ? (
+        <p class="text-muted">No books listed yet.</p>
+      ) : (
+        <div class="space-y-14 md:space-y-20">
+          {books.map((book) => <BookCard book={book} />)}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

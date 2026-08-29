@@ -1,0 +1,40 @@
+{
+  "pages": [
+    {
+      "key": "blog",
+      "title": "Posts & Articles",
+      "intro": "Notes from the archive, teaching reflections and the occasional argument.",
+      "seoTitle": "Blog",
+      "seoDescription": "Essays and short pieces on history, archives and teaching by Annu Biswas.",
+      "perPage": 9
+    },
+    {
+      "key": "books",
+      "title": "Books",
+      "intro": "Monographs and edited collections, with links to publishers and booksellers.",
+      "seoTitle": "Books",
+      "seoDescription": "Books written and edited by Annu Biswas, with publisher and bookseller links."
+    },
+    {
+      "key": "publications",
+      "title": "Publications",
+      "intro": "Peer-reviewed articles, chapters and reports, most recent first.",
+      "seoTitle": "Publications",
+      "seoDescription": "Peer-reviewed publications, chapters and reports by Annu Biswas."
+    },
+    {
+      "key": "events",
+      "title": "Events",
+      "intro": "Lectures, seminars and public conversations - upcoming and past.",
+      "seoTitle": "Events",
+      "seoDescription": "Upcoming and past lectures, seminars and public talks by Annu Biswas."
+    },
+    {
+      "key": "media",
+      "title": "Media Appearances",
+      "intro": "Documentary contributions, recorded lectures and radio conversations.",
+      "seoTitle": "Media Appearances",
+      "seoDescription": "Recorded lectures, documentary and radio appearances by Annu Biswas."
+    }
+  ]
+}

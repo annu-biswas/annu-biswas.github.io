@@ -1,0 +1,30 @@
+{
+  "name": "annu-biswas-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "cms": "npx decap-server",
+    "check:overflow": "node scripts/check-overflow.mjs",
+    "verify": "astro check && astro build && npm run check:overflow"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.9",
+    "astro-seo": "^1.2.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "decap-server": "^3.10.0",
+    "js-yaml": "^5.4.1",
+    "playwright": "^1.62.1",
+    "typescript": "^6.0.3"
+  }
+}

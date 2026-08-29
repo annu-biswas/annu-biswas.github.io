@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, formatTime } from '@/lib/settings';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+  past?: boolean;
+}
+
+const { event, past = false } = Astro.props;
+const { startDate, endDate } = event.data;
+const sameDay = !endDate || startDate.toDateString() === endDate.toDateString();
+---
+
+<article class:list={['grid gap-6 border-t border-forest/15 py-8 md:grid-cols-[9rem_1fr] md:gap-10', past && 'opacity-70']}>
+  <div>
+    <p class="font-serif text-3xl leading-none text-clay">{formatDate(startDate, { day: 'numeric', month: undefined, year: undefined })}</p>
+    <p class="mt-1 text-xs uppercase tracking-[0.18em] text-muted">
+      {formatDate(startDate, { day: undefined, month: 'short', year: 'numeric' })}
+    </p>
+  </div>
+  <div>
+    <p class="eyebrow text-muted">{event.data.kind}</p>
+    <h3 class="mt-2 text-h3 text-forest">{event.data.title}</h3>
+    <p class="mt-2 text-sm text-muted">
+      {event.data.location}
+      {' · '}
+      {sameDay ? formatTime(startDate) : `until ${formatDate(endDate!)}`}
+    </p>
+    <p class="mt-4 max-w-prose leading-relaxed text-ink/85">{event.data.summary}</p>
+    {event.data.registerUrl && !past && (
+      <a
+        href={event.data.registerUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-5 inline-flex bg-clay px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-clay-dark"
+      >
+        Register
+      </a>
+    )}
+  </div>
+</article>
