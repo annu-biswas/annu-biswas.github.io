@@ -1,6 +1,17 @@
 {
-  "shortName": "Elite Professor",
-  "copyright": "© 2026 Jonah Doe. All rights reserved.",
+  "shortName": "AB",
+  "copyright": "© 2026 Annu Biswas. All rights reserved.",
+  "theme": {
+    "clay": "#be6d54",
+    "cream": "#e9e6df",
+    "sand": "#f5f3ee",
+    "ink": "#1c1c1a",
+    "forestSoft": "#14453c",
+    "muted": "#5f6360",
+    "clayDark": "#a45940",
+    "olive": "#27331b",
+    "forest": "#0b322b"
+  },
   "headerLinks": [
     {
       "label": "Home",
@@ -49,16 +60,16 @@
       "external": true
     }
   ],
-  "phone": "+1 (555) 014 2200",
-  "tagline": "Department of History, Greenhill University, CA",
+  "phone": "+91 8584065751",
+  "tagline": "PhD Scholar, HSS, IIT Patna, Academician and Researcher at Adamas University, Independent Author and Counselling Psychologist",
   "logoImage": "",
-  "siteName": "Professor Portfolio",
+  "siteName": "Annu Biswas",
   "favicon": "/favicon.svg",
-  "address": "Department of History, Greenhill University, CA",
-  "logoText": "Academic Portfolio",
+  "address": "Department of Psychology, School of Health and Medical Sciences, Adamas University, Kolkata",
+  "logoText": "Annu Biswas",
   "themeColor": "#0b322b",
-  "defaultDescription": "Historian, author and lecturer. Writing on memory, archives and the long nineteenth century.",
-  "email": "hello@random.com",
+  "defaultDescription": "Interested in sexual cognition, gender psychology, sexuality and personality studies, her research work at Indian Institute of Technology, Patna focuses on understanding the interplay of personality, explicit media consumption and construction of sexual cognition resulting in varied sexual identities.",
+  "email": "annu1.biswas@adamasuniversity.ac.in",
   "defaultShareImage": "/images/share.jpg",
   "footerLinks": [
     {
@@ -85,16 +96,5 @@
       "label": "Contact",
       "href": "/contact"
     }
-  ],
-  "theme": {
-    "forest": "#0b322b",
-    "forestSoft": "#14453c",
-    "olive": "#27331b",
-    "cream": "#e9e6df",
-    "sand": "#f5f3ee",
-    "clay": "#be6d54",
-    "clayDark": "#a45940",
-    "ink": "#1c1c1a",
-    "muted": "#5f6360"
-  }
+  ]
 }
